@@ -21,7 +21,7 @@ import {
   ProductButton,
 } from './styles';
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
   image_url: string;
@@ -35,14 +35,15 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO
+      const { data } = await api.get<Product[]>('products');
+      setProducts(data);
     }
 
     loadProducts();
   }, []);
 
   function handleAddToCart(item: Product): void {
-    // TODO
+    addToCart(item);
   }
 
   return (
@@ -56,19 +57,21 @@ const Dashboard: React.FC = () => {
             height: 80,
           }}
           renderItem={({ item }) => (
-            <Product>
-              <ProductImage source={{ uri: item.image_url }} />
-              <ProductTitle>{item.title}</ProductTitle>
-              <PriceContainer>
-                <ProductPrice>{formatValue(item.price)}</ProductPrice>
-                <ProductButton
-                  testID={`add-to-cart-${item.id}`}
-                  onPress={() => handleAddToCart(item)}
-                >
-                  <FeatherIcon size={20} name="plus" color="#C4C4C4" />
-                </ProductButton>
-              </PriceContainer>
-            </Product>
+            <>
+              <Product key={item.id}>
+                <ProductImage source={{ uri: item.image_url }} />
+                <ProductTitle>{item.title}</ProductTitle>
+                <PriceContainer>
+                  <ProductPrice>{formatValue(item.price)}</ProductPrice>
+                  <ProductButton
+                    testID={`add-to-cart-${item.id}`}
+                    onPress={() => handleAddToCart(item)}
+                  >
+                    <FeatherIcon size={20} name="plus" color="#C4C4C4" />
+                  </ProductButton>
+                </PriceContainer>
+              </Product>
+            </>
           )}
         />
       </ProductContainer>
